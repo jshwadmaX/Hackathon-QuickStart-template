@@ -1,0 +1,210 @@
+#pragma version 10
+#pragma typetrack false
+
+// smart_contracts.contribchain.contract.ContribChain.__algopy_entrypoint_with_init() -> uint64:
+main:
+    intcblock 0 1
+    bytecblock "counter" 0x151f7c75 "tasks"
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/contribchain/contract.py:16
+    // self.counter = UInt64(0)
+    bytec_0 // "counter"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/contribchain/contract.py:5
+    // class ContribChain(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@8
+    pushbytess 0x4dcdf7ec 0xb3913e15 0x056f3586 // method "log_contribution(string,uint64)uint64", method "get_contribution(uint64)string", method "total_entries()uint64"
+    txna ApplicationArgs 0
+    match main_log_contribution_route@5 main_get_contribution_route@6 main_total_entries_route@7
+
+main_after_if_else@10:
+    // smart_contracts/contribchain/contract.py:5
+    // class ContribChain(ARC4Contract):
+    intc_0 // 0
+    return
+
+main_total_entries_route@7:
+    // smart_contracts/contribchain/contract.py:44
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub total_entries
+    itob
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_get_contribution_route@6:
+    // smart_contracts/contribchain/contract.py:35
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/contribchain/contract.py:5
+    // class ContribChain(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/contribchain/contract.py:35
+    // @abimethod()
+    callsub get_contribution
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_log_contribution_route@5:
+    // smart_contracts/contribchain/contract.py:18
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/contribchain/contract.py:5
+    // class ContribChain(ARC4Contract):
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/contribchain/contract.py:18
+    // @abimethod()
+    callsub log_contribution
+    itob
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_bare_routing@8:
+    // smart_contracts/contribchain/contract.py:5
+    // class ContribChain(ARC4Contract):
+    txn OnCompletion
+    bnz main_after_if_else@10
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    intc_1 // 1
+    return
+
+
+// smart_contracts.contribchain.contract.ContribChain.log_contribution(task: bytes, hours: uint64) -> uint64:
+log_contribution:
+    // smart_contracts/contribchain/contract.py:18-19
+    // @abimethod()
+    // def log_contribution(self, task: String, hours: UInt64) -> UInt64:
+    proto 2 1
+    // smart_contracts/contribchain/contract.py:22
+    // assert hours > 0, "Hours must be greater than zero"
+    frame_dig -1
+    assert // Hours must be greater than zero
+    // smart_contracts/contribchain/contract.py:24
+    // task_id = self.counter
+    intc_0 // 0
+    bytec_0 // "counter"
+    app_global_get_ex
+    assert // check self.counter exists
+    // smart_contracts/contribchain/contract.py:26
+    // self.tasks[task_id] = task
+    dup
+    itob
+    bytec_2 // "tasks"
+    dig 1
+    concat
+    dup
+    box_del
+    pop
+    frame_dig -2
+    box_put
+    // smart_contracts/contribchain/contract.py:27
+    // self.hours[task_id] = hours
+    pushbytes "hours"
+    dig 1
+    concat
+    frame_dig -1
+    itob
+    box_put
+    // smart_contracts/contribchain/contract.py:28
+    // self.members[task_id] = Txn.sender
+    pushbytes "members"
+    dig 1
+    concat
+    txn Sender
+    box_put
+    // smart_contracts/contribchain/contract.py:29
+    // self.timestamps[task_id] = Global.latest_timestamp
+    pushbytes "timestamps"
+    swap
+    concat
+    global LatestTimestamp
+    itob
+    box_put
+    // smart_contracts/contribchain/contract.py:31
+    // self.counter += UInt64(1)
+    intc_0 // 0
+    bytec_0 // "counter"
+    app_global_get_ex
+    assert // check self.counter exists
+    intc_1 // 1
+    +
+    bytec_0 // "counter"
+    swap
+    app_global_put
+    // smart_contracts/contribchain/contract.py:33
+    // return task_id
+    retsub
+
+
+// smart_contracts.contribchain.contract.ContribChain.get_contribution(task_id: uint64) -> bytes:
+get_contribution:
+    // smart_contracts/contribchain/contract.py:35-36
+    // @abimethod()
+    // def get_contribution(self, task_id: UInt64) -> String:
+    proto 1 1
+    // smart_contracts/contribchain/contract.py:39
+    // task, exists = self.tasks.maybe(task_id)
+    frame_dig -1
+    itob
+    bytec_2 // "tasks"
+    swap
+    concat
+    box_get
+    // smart_contracts/contribchain/contract.py:40
+    // assert exists, "Contribution not found"
+    assert // Contribution not found
+    // smart_contracts/contribchain/contract.py:42
+    // return task
+    retsub
+
+
+// smart_contracts.contribchain.contract.ContribChain.total_entries() -> uint64:
+total_entries:
+    // smart_contracts/contribchain/contract.py:46
+    // return self.counter
+    intc_0 // 0
+    bytec_0 // "counter"
+    app_global_get_ex
+    assert // check self.counter exists
+    retsub

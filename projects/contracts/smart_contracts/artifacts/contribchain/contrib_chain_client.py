@@ -19,7 +19,7 @@ from algosdk.v2client.models import SimulateTraceConfig
 import algokit_utils
 from algokit_utils import AlgorandClient as _AlgoKitAlgorandClient
 
-_APP_SPEC_JSON = r"""{"arcs": [22, 28], "bareActions": {"call": [], "create": ["NoOp"]}, "methods": [{"actions": {"call": ["NoOp"], "create": []}, "args": [{"type": "string", "name": "memo"}, {"type": "pay", "name": "pay_txn"}], "name": "deposit", "returns": {"type": "uint64"}, "desc": "Accepts a payment into the app escrow and records sender's deposited balance", "events": [], "readonly": false, "recommendations": {}}, {"actions": {"call": ["NoOp"], "create": []}, "args": [{"type": "uint64", "name": "amount"}], "name": "withdraw", "returns": {"type": "uint64"}, "desc": "Sends ALGO back to the caller from their recorded balance", "events": [], "readonly": false, "recommendations": {}}], "name": "Bank", "state": {"keys": {"box": {}, "global": {"total_deposit": {"key": "dG90YWxfZGVwb3NpdA==", "keyType": "AVMString", "valueType": "AVMUint64"}}, "local": {}}, "maps": {"box": {"deposits": {"keyType": "address", "valueType": "uint64", "prefix": ""}}, "global": {}, "local": {}}, "schema": {"global": {"bytes": 0, "ints": 1}, "local": {"bytes": 0, "ints": 0}}}, "structs": {}, "byteCode": {"approval": "CiACAQAmAg10b3RhbF9kZXBvc2l0BBUffHUxGEAAAygjZzEbQQBNggIEn1l8MgQxIUF2NhoAjgIAFwACI0MxGRREMRhENhoBF4gAeBYpTFCwIkMxGRREMRhENhoBVwIAMRYiCUk4ECISRIgAEhYpTFCwIkMxGUD/wzEYFEQiQ4oCAYv/OAcyChJEi/84CElEi/84AEm+TBdMQQAeiwKLAAgWiwFMvyMoZUSLAAgoTGeLAb5MF0xEjACJiwAWiwFMv0L/4ooBATEAvkwXTESL/0SL/0sBDkSxMQCL/7IIsgcishAjsgGzi/8JSUAACDEAvEiLAEyJMQCLABa/Qv/z", "clear": "CoEBQw=="}, "compilerInfo": {"compiler": "puya", "compilerVersion": {"major": 4, "minor": 7, "patch": 0}}, "events": [], "networks": {}, "source": {"approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBzbWFydF9jb250cmFjdHMuYmFuay5jb250cmFjdC5CYW5rLl9fYWxnb3B5X2VudHJ5cG9pbnRfd2l0aF9pbml0KCkgLT4gdWludDY0OgptYWluOgogICAgaW50Y2Jsb2NrIDEgMAogICAgYnl0ZWNibG9jayAidG90YWxfZGVwb3NpdCIgMHgxNTFmN2M3NQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgIGJueiBtYWluX2FmdGVyX2lmX2Vsc2VAMgogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6MTEKICAgIC8vIHNlbGYudG90YWxfZGVwb3NpdCA9IFVJbnQ2NCgwKQogICAgYnl0ZWNfMCAvLyAidG90YWxfZGVwb3NpdCIKICAgIGludGNfMSAvLyAwCiAgICBhcHBfZ2xvYmFsX3B1dAoKbWFpbl9hZnRlcl9pZl9lbHNlQDI6CiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weTo1CiAgICAvLyBjbGFzcyBCYW5rKEFSQzRDb250cmFjdCk6CiAgICB0eG4gTnVtQXBwQXJncwogICAgYnogbWFpbl9iYXJlX3JvdXRpbmdANwogICAgcHVzaGJ5dGVzcyAweDlmNTk3YzMyIDB4MzEyMTQxNzYgLy8gbWV0aG9kICJkZXBvc2l0KHN0cmluZyxwYXkpdWludDY0IiwgbWV0aG9kICJ3aXRoZHJhdyh1aW50NjQpdWludDY0IgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggbWFpbl9kZXBvc2l0X3JvdXRlQDUgbWFpbl93aXRoZHJhd19yb3V0ZUA2CgptYWluX2FmdGVyX2lmX2Vsc2VAOToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjUKICAgIC8vIGNsYXNzIEJhbmsoQVJDNENvbnRyYWN0KToKICAgIGludGNfMSAvLyAwCiAgICByZXR1cm4KCm1haW5fd2l0aGRyYXdfcm91dGVANjoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjI4CiAgICAvLyBAYWJpbWV0aG9kKCkKICAgIHR4biBPbkNvbXBsZXRpb24KICAgICEKICAgIGFzc2VydCAvLyBPbkNvbXBsZXRpb24gaXMgbm90IE5vT3AKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICBhc3NlcnQgLy8gY2FuIG9ubHkgY2FsbCB3aGVuIG5vdCBjcmVhdGluZwogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6NQogICAgLy8gY2xhc3MgQmFuayhBUkM0Q29udHJhY3QpOgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgYnRvaQogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6MjgKICAgIC8vIEBhYmltZXRob2QoKQogICAgY2FsbHN1YiB3aXRoZHJhdwogICAgaXRvYgogICAgYnl0ZWNfMSAvLyAweDE1MWY3Yzc1CiAgICBzd2FwCiAgICBjb25jYXQKICAgIGxvZwogICAgaW50Y18wIC8vIDEKICAgIHJldHVybgoKbWFpbl9kZXBvc2l0X3JvdXRlQDU6CiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weToxMwogICAgLy8gQGFiaW1ldGhvZCgpCiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIGlzIG5vdCBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYXNzZXJ0IC8vIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjUKICAgIC8vIGNsYXNzIEJhbmsoQVJDNENvbnRyYWN0KToKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIGV4dHJhY3QgMiAwCiAgICB0eG4gR3JvdXBJbmRleAogICAgaW50Y18wIC8vIDEKICAgIC0KICAgIGR1cAogICAgZ3R4bnMgVHlwZUVudW0KICAgIGludGNfMCAvLyBwYXkKICAgID09CiAgICBhc3NlcnQgLy8gdHJhbnNhY3Rpb24gdHlwZSBpcyBwYXkKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjEzCiAgICAvLyBAYWJpbWV0aG9kKCkKICAgIGNhbGxzdWIgZGVwb3NpdAogICAgaXRvYgogICAgYnl0ZWNfMSAvLyAweDE1MWY3Yzc1CiAgICBzd2FwCiAgICBjb25jYXQKICAgIGxvZwogICAgaW50Y18wIC8vIDEKICAgIHJldHVybgoKbWFpbl9iYXJlX3JvdXRpbmdANzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjUKICAgIC8vIGNsYXNzIEJhbmsoQVJDNENvbnRyYWN0KToKICAgIHR4biBPbkNvbXBsZXRpb24KICAgIGJueiBtYWluX2FmdGVyX2lmX2Vsc2VAOQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICEKICAgIGFzc2VydCAvLyBjYW4gb25seSBjYWxsIHdoZW4gY3JlYXRpbmcKICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCgovLyBzbWFydF9jb250cmFjdHMuYmFuay5jb250cmFjdC5CYW5rLmRlcG9zaXQobWVtbzogYnl0ZXMsIHBheV90eG46IHVpbnQ2NCkgLT4gdWludDY0OgpkZXBvc2l0OgogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6MTMtMTQKICAgIC8vIEBhYmltZXRob2QoKQogICAgLy8gZGVmIGRlcG9zaXQoc2VsZiwgbWVtbzogU3RyaW5nLCBwYXlfdHhuOiBndHhuLlBheW1lbnRUcmFuc2FjdGlvbikgLT4gVUludDY0OgogICAgcHJvdG8gMiAxCiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weToxNgogICAgLy8gYXNzZXJ0IHBheV90eG4ucmVjZWl2ZXIgPT0gR2xvYmFsLmN1cnJlbnRfYXBwbGljYXRpb25fYWRkcmVzcywgIlJlY2VpdmVyIG11c3QgYmUgdGhlIGNvbnRyYWN0IGFkZHJlc3MiCiAgICBmcmFtZV9kaWcgLTEKICAgIGd0eG5zIFJlY2VpdmVyCiAgICBnbG9iYWwgQ3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcwogICAgPT0KICAgIGFzc2VydCAvLyBSZWNlaXZlciBtdXN0IGJlIHRoZSBjb250cmFjdCBhZGRyZXNzCiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weToxNwogICAgLy8gYXNzZXJ0IHBheV90eG4uYW1vdW50ID4gMCwgIkRlcG9zaXQgYW1vdW50IG11c3QgYmUgZ3JlYXRlciB0aGFuIHplcm8iCiAgICBmcmFtZV9kaWcgLTEKICAgIGd0eG5zIEFtb3VudAogICAgZHVwCiAgICBhc3NlcnQgLy8gRGVwb3NpdCBhbW91bnQgbXVzdCBiZSBncmVhdGVyIHRoYW4gemVybwogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6MTkKICAgIC8vIGFtb3VudCwgZXhpc3RzID0gc2VsZi5kZXBvc2l0cy5tYXliZShwYXlfdHhuLnNlbmRlcikKICAgIGZyYW1lX2RpZyAtMQogICAgZ3R4bnMgU2VuZGVyCiAgICBkdXAKICAgIGJveF9nZXQKICAgIHN3YXAKICAgIGJ0b2kKICAgIHN3YXAKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjIwCiAgICAvLyBpZiBleGlzdHM6CiAgICBieiBkZXBvc2l0X2Vsc2VfYm9keUAyCiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weToyMQogICAgLy8gc2VsZi5kZXBvc2l0c1twYXlfdHhuLnNlbmRlcl0gPSBhbW91bnQgKyBwYXlfdHhuLmFtb3VudAogICAgZnJhbWVfZGlnIDIKICAgIGZyYW1lX2RpZyAwCiAgICArCiAgICBpdG9iCiAgICBmcmFtZV9kaWcgMQogICAgc3dhcAogICAgYm94X3B1dAoKZGVwb3NpdF9hZnRlcl9pZl9lbHNlQDM6CiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weToyNQogICAgLy8gc2VsZi50b3RhbF9kZXBvc2l0ICs9IHBheV90eG4uYW1vdW50CiAgICBpbnRjXzEgLy8gMAogICAgYnl0ZWNfMCAvLyAidG90YWxfZGVwb3NpdCIKICAgIGFwcF9nbG9iYWxfZ2V0X2V4CiAgICBhc3NlcnQgLy8gY2hlY2sgc2VsZi50b3RhbF9kZXBvc2l0IGV4aXN0cwogICAgZnJhbWVfZGlnIDAKICAgICsKICAgIGJ5dGVjXzAgLy8gInRvdGFsX2RlcG9zaXQiCiAgICBzd2FwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6MjYKICAgIC8vIHJldHVybiBzZWxmLmRlcG9zaXRzW3BheV90eG4uc2VuZGVyXQogICAgZnJhbWVfZGlnIDEKICAgIGJveF9nZXQKICAgIHN3YXAKICAgIGJ0b2kKICAgIHN3YXAKICAgIGFzc2VydCAvLyBjaGVjayBzZWxmLmRlcG9zaXRzIGVudHJ5IGV4aXN0cwogICAgZnJhbWVfYnVyeSAwCiAgICByZXRzdWIKCmRlcG9zaXRfZWxzZV9ib2R5QDI6CiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weToyMwogICAgLy8gc2VsZi5kZXBvc2l0c1twYXlfdHhuLnNlbmRlcl0gPSBwYXlfdHhuLmFtb3VudAogICAgZnJhbWVfZGlnIDAKICAgIGl0b2IKICAgIGZyYW1lX2RpZyAxCiAgICBzd2FwCiAgICBib3hfcHV0CiAgICBiIGRlcG9zaXRfYWZ0ZXJfaWZfZWxzZUAzCgoKLy8gc21hcnRfY29udHJhY3RzLmJhbmsuY29udHJhY3QuQmFuay53aXRoZHJhdyhhbW91bnQ6IHVpbnQ2NCkgLT4gdWludDY0Ogp3aXRoZHJhdzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjI4LTI5CiAgICAvLyBAYWJpbWV0aG9kKCkKICAgIC8vIGRlZiB3aXRoZHJhdyhzZWxmLCBhbW91bnQ6IFVJbnQ2NCkgLT4gVUludDY0OgogICAgcHJvdG8gMSAxCiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weTozMQogICAgLy8gY3VycmVudCwgZXhpc3RzID0gc2VsZi5kZXBvc2l0cy5tYXliZShUeG4uc2VuZGVyKQogICAgdHhuIFNlbmRlcgogICAgYm94X2dldAogICAgc3dhcAogICAgYnRvaQogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6MzIKICAgIC8vIGFzc2VydCBleGlzdHMsICJObyBkZXBvc2l0cyBmb3VuZCBmb3IgdGhpcyBhY2NvdW50IgogICAgc3dhcAogICAgYXNzZXJ0IC8vIE5vIGRlcG9zaXRzIGZvdW5kIGZvciB0aGlzIGFjY291bnQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjMzCiAgICAvLyBhc3NlcnQgYW1vdW50ID4gMCwgIldpdGhkcmF3YWwgYW1vdW50IG11c3QgYmUgZ3JlYXRlciB0aGFuIHplcm8iCiAgICBmcmFtZV9kaWcgLTEKICAgIGFzc2VydCAvLyBXaXRoZHJhd2FsIGFtb3VudCBtdXN0IGJlIGdyZWF0ZXIgdGhhbiB6ZXJvCiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weTozNAogICAgLy8gYXNzZXJ0IGFtb3VudCA8PSBjdXJyZW50LCAiV2l0aGRyYXdhbCBhbW91bnQgZXhjZWVkcyBiYWxhbmNlIgogICAgZnJhbWVfZGlnIC0xCiAgICBkaWcgMQogICAgPD0KICAgIGFzc2VydCAvLyBXaXRoZHJhd2FsIGFtb3VudCBleGNlZWRzIGJhbGFuY2UKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjM2CiAgICAvLyBpdHhuLlBheW1lbnQocmVjZWl2ZXI9VHhuLnNlbmRlciwgYW1vdW50PWFtb3VudCwgZmVlPTApLnN1Ym1pdCgpCiAgICBpdHhuX2JlZ2luCiAgICB0eG4gU2VuZGVyCiAgICBmcmFtZV9kaWcgLTEKICAgIGl0eG5fZmllbGQgQW1vdW50CiAgICBpdHhuX2ZpZWxkIFJlY2VpdmVyCiAgICBpbnRjXzAgLy8gcGF5CiAgICBpdHhuX2ZpZWxkIFR5cGVFbnVtCiAgICBpbnRjXzEgLy8gMAogICAgaXR4bl9maWVsZCBGZWUKICAgIGl0eG5fc3VibWl0CiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weTozOAogICAgLy8gcmVtYWluaW5nID0gY3VycmVudCAtIGFtb3VudAogICAgZnJhbWVfZGlnIC0xCiAgICAtCiAgICBkdXAKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9iYW5rL2NvbnRyYWN0LnB5OjM5CiAgICAvLyBpZiByZW1haW5pbmcgPT0gVUludDY0KDApOgogICAgYm56IHdpdGhkcmF3X2Vsc2VfYm9keUAzCiAgICAvLyBzbWFydF9jb250cmFjdHMvYmFuay9jb250cmFjdC5weTo0MAogICAgLy8gZGVsIHNlbGYuZGVwb3NpdHNbVHhuLnNlbmRlcl0KICAgIHR4biBTZW5kZXIKICAgIGJveF9kZWwKICAgIHBvcAoKd2l0aGRyYXdfYWZ0ZXJfaWZfZWxzZUA0OgogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6NDQKICAgIC8vIHJldHVybiByZW1haW5pbmcKICAgIGZyYW1lX2RpZyAwCiAgICBzd2FwCiAgICByZXRzdWIKCndpdGhkcmF3X2Vsc2VfYm9keUAzOgogICAgLy8gc21hcnRfY29udHJhY3RzL2JhbmsvY29udHJhY3QucHk6NDIKICAgIC8vIHNlbGYuZGVwb3NpdHNbVHhuLnNlbmRlcl0gPSByZW1haW5pbmcKICAgIHR4biBTZW5kZXIKICAgIGZyYW1lX2RpZyAwCiAgICBpdG9iCiAgICBib3hfcHV0CiAgICBiIHdpdGhkcmF3X2FmdGVyX2lmX2Vsc2VANAo=", "clear": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBhbGdvcHkuYXJjNC5BUkM0Q29udHJhY3QuY2xlYXJfc3RhdGVfcHJvZ3JhbSgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIHB1c2hpbnQgMSAvLyAxCiAgICByZXR1cm4K"}, "sourceInfo": {"approval": {"pcOffsetMethod": "none", "sourceInfo": [{"pc": [143], "errorMessage": "Deposit amount must be greater than zero"}, {"pc": [205], "errorMessage": "No deposits found for this account"}, {"pc": [65, 86], "errorMessage": "OnCompletion is not NoOp"}, {"pc": [137], "errorMessage": "Receiver must be the contract address"}, {"pc": [214], "errorMessage": "Withdrawal amount exceeds balance"}, {"pc": [208], "errorMessage": "Withdrawal amount must be greater than zero"}, {"pc": [124], "errorMessage": "can only call when creating"}, {"pc": [68, 89], "errorMessage": "can only call when not creating"}, {"pc": [182], "errorMessage": "check self.deposits entry exists"}, {"pc": [169], "errorMessage": "check self.total_deposit exists"}, {"pc": [105], "errorMessage": "transaction type is pay"}]}, "clear": {"pcOffsetMethod": "none", "sourceInfo": []}}, "templateVariables": {}}"""
+_APP_SPEC_JSON = r"""{"arcs": [22, 28], "bareActions": {"call": [], "create": ["NoOp"]}, "methods": [{"actions": {"call": ["NoOp"], "create": []}, "args": [{"type": "string", "name": "task"}, {"type": "uint64", "name": "hours"}], "name": "log_contribution", "returns": {"type": "uint64"}, "desc": "Store new contribution", "events": [], "readonly": false, "recommendations": {}}, {"actions": {"call": ["NoOp"], "create": []}, "args": [{"type": "uint64", "name": "task_id"}], "name": "get_contribution", "returns": {"type": "string"}, "desc": "Return task description (simple test read)", "events": [], "readonly": false, "recommendations": {}}, {"actions": {"call": ["NoOp"], "create": []}, "args": [], "name": "total_entries", "returns": {"type": "uint64"}, "events": [], "readonly": false, "recommendations": {}}], "name": "ContribChain", "state": {"keys": {"box": {}, "global": {"counter": {"key": "Y291bnRlcg==", "keyType": "AVMString", "valueType": "AVMUint64"}}, "local": {}}, "maps": {"box": {"tasks": {"keyType": "uint64", "valueType": "AVMString", "prefix": "dGFza3M="}, "hours": {"keyType": "uint64", "valueType": "uint64", "prefix": "aG91cnM="}, "members": {"keyType": "uint64", "valueType": "address", "prefix": "bWVtYmVycw=="}, "timestamps": {"keyType": "uint64", "valueType": "uint64", "prefix": "dGltZXN0YW1wcw=="}}, "global": {}, "local": {}}, "schema": {"global": {"bytes": 0, "ints": 1}, "local": {"bytes": 0, "ints": 0}}}, "structs": {}, "byteCode": {"approval": "CiACAAEmAwdjb3VudGVyBBUffHUFdGFza3MxGEAAAygiZzEbQQBmggMETc337ASzkT4VBAVvNYY2GgCOAwAvABMAAiJDMRkURDEYRIgApBYpTFCwI0MxGRREMRhENhoBF4gAg0kVFlcGAkxQKUxQsCNDMRkURDEYRDYaAVcCADYaAheIABIWKUxQsCNDMRlA/7ExGBREI0OKAgGL/0QiKGVESRYqSwFQSbxIi/6/gAVob3Vyc0sBUIv/Fr+AB21lbWJlcnNLAVAxAL+ACnRpbWVzdGFtcHNMUDIHFr8iKGVEIwgoTGeJigEBi/8WKkxQvkSJIihlRIk=", "clear": "CoEBQw=="}, "compilerInfo": {"compiler": "puya", "compilerVersion": {"major": 4, "minor": 7, "patch": 0}}, "events": [], "networks": {}, "source": {"approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBzbWFydF9jb250cmFjdHMuY29udHJpYmNoYWluLmNvbnRyYWN0LkNvbnRyaWJDaGFpbi5fX2FsZ29weV9lbnRyeXBvaW50X3dpdGhfaW5pdCgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIGludGNibG9jayAwIDEKICAgIGJ5dGVjYmxvY2sgImNvdW50ZXIiIDB4MTUxZjdjNzUgInRhc2tzIgogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgIGJueiBtYWluX2FmdGVyX2lmX2Vsc2VAMgogICAgLy8gc21hcnRfY29udHJhY3RzL2NvbnRyaWJjaGFpbi9jb250cmFjdC5weToxNgogICAgLy8gc2VsZi5jb3VudGVyID0gVUludDY0KDApCiAgICBieXRlY18wIC8vICJjb3VudGVyIgogICAgaW50Y18wIC8vIDAKICAgIGFwcF9nbG9iYWxfcHV0CgptYWluX2FmdGVyX2lmX2Vsc2VAMjoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6NQogICAgLy8gY2xhc3MgQ29udHJpYkNoYWluKEFSQzRDb250cmFjdCk6CiAgICB0eG4gTnVtQXBwQXJncwogICAgYnogbWFpbl9iYXJlX3JvdXRpbmdAOAogICAgcHVzaGJ5dGVzcyAweDRkY2RmN2VjIDB4YjM5MTNlMTUgMHgwNTZmMzU4NiAvLyBtZXRob2QgImxvZ19jb250cmlidXRpb24oc3RyaW5nLHVpbnQ2NCl1aW50NjQiLCBtZXRob2QgImdldF9jb250cmlidXRpb24odWludDY0KXN0cmluZyIsIG1ldGhvZCAidG90YWxfZW50cmllcygpdWludDY0IgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggbWFpbl9sb2dfY29udHJpYnV0aW9uX3JvdXRlQDUgbWFpbl9nZXRfY29udHJpYnV0aW9uX3JvdXRlQDYgbWFpbl90b3RhbF9lbnRyaWVzX3JvdXRlQDcKCm1haW5fYWZ0ZXJfaWZfZWxzZUAxMDoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6NQogICAgLy8gY2xhc3MgQ29udHJpYkNoYWluKEFSQzRDb250cmFjdCk6CiAgICBpbnRjXzAgLy8gMAogICAgcmV0dXJuCgptYWluX3RvdGFsX2VudHJpZXNfcm91dGVANzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6NDQKICAgIC8vIEBhYmltZXRob2QoKQogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgYXNzZXJ0IC8vIE9uQ29tcGxldGlvbiBpcyBub3QgTm9PcAogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgIGFzc2VydCAvLyBjYW4gb25seSBjYWxsIHdoZW4gbm90IGNyZWF0aW5nCiAgICBjYWxsc3ViIHRvdGFsX2VudHJpZXMKICAgIGl0b2IKICAgIGJ5dGVjXzEgLy8gMHgxNTFmN2M3NQogICAgc3dhcAogICAgY29uY2F0CiAgICBsb2cKICAgIGludGNfMSAvLyAxCiAgICByZXR1cm4KCm1haW5fZ2V0X2NvbnRyaWJ1dGlvbl9yb3V0ZUA2OgogICAgLy8gc21hcnRfY29udHJhY3RzL2NvbnRyaWJjaGFpbi9jb250cmFjdC5weTozNQogICAgLy8gQGFiaW1ldGhvZCgpCiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIGlzIG5vdCBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYXNzZXJ0IC8vIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6NQogICAgLy8gY2xhc3MgQ29udHJpYkNoYWluKEFSQzRDb250cmFjdCk6CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBidG9pCiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjM1CiAgICAvLyBAYWJpbWV0aG9kKCkKICAgIGNhbGxzdWIgZ2V0X2NvbnRyaWJ1dGlvbgogICAgZHVwCiAgICBsZW4KICAgIGl0b2IKICAgIGV4dHJhY3QgNiAyCiAgICBzd2FwCiAgICBjb25jYXQKICAgIGJ5dGVjXzEgLy8gMHgxNTFmN2M3NQogICAgc3dhcAogICAgY29uY2F0CiAgICBsb2cKICAgIGludGNfMSAvLyAxCiAgICByZXR1cm4KCm1haW5fbG9nX2NvbnRyaWJ1dGlvbl9yb3V0ZUA1OgogICAgLy8gc21hcnRfY29udHJhY3RzL2NvbnRyaWJjaGFpbi9jb250cmFjdC5weToxOAogICAgLy8gQGFiaW1ldGhvZCgpCiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIGlzIG5vdCBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYXNzZXJ0IC8vIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6NQogICAgLy8gY2xhc3MgQ29udHJpYkNoYWluKEFSQzRDb250cmFjdCk6CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBleHRyYWN0IDIgMAogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgogICAgYnRvaQogICAgLy8gc21hcnRfY29udHJhY3RzL2NvbnRyaWJjaGFpbi9jb250cmFjdC5weToxOAogICAgLy8gQGFiaW1ldGhvZCgpCiAgICBjYWxsc3ViIGxvZ19jb250cmlidXRpb24KICAgIGl0b2IKICAgIGJ5dGVjXzEgLy8gMHgxNTFmN2M3NQogICAgc3dhcAogICAgY29uY2F0CiAgICBsb2cKICAgIGludGNfMSAvLyAxCiAgICByZXR1cm4KCm1haW5fYmFyZV9yb3V0aW5nQDg6CiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjUKICAgIC8vIGNsYXNzIENvbnRyaWJDaGFpbihBUkM0Q29udHJhY3QpOgogICAgdHhuIE9uQ29tcGxldGlvbgogICAgYm56IG1haW5fYWZ0ZXJfaWZfZWxzZUAxMAogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICEKICAgIGFzc2VydCAvLyBjYW4gb25seSBjYWxsIHdoZW4gY3JlYXRpbmcKICAgIGludGNfMSAvLyAxCiAgICByZXR1cm4KCgovLyBzbWFydF9jb250cmFjdHMuY29udHJpYmNoYWluLmNvbnRyYWN0LkNvbnRyaWJDaGFpbi5sb2dfY29udHJpYnV0aW9uKHRhc2s6IGJ5dGVzLCBob3VyczogdWludDY0KSAtPiB1aW50NjQ6CmxvZ19jb250cmlidXRpb246CiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjE4LTE5CiAgICAvLyBAYWJpbWV0aG9kKCkKICAgIC8vIGRlZiBsb2dfY29udHJpYnV0aW9uKHNlbGYsIHRhc2s6IFN0cmluZywgaG91cnM6IFVJbnQ2NCkgLT4gVUludDY0OgogICAgcHJvdG8gMiAxCiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjIyCiAgICAvLyBhc3NlcnQgaG91cnMgPiAwLCAiSG91cnMgbXVzdCBiZSBncmVhdGVyIHRoYW4gemVybyIKICAgIGZyYW1lX2RpZyAtMQogICAgYXNzZXJ0IC8vIEhvdXJzIG11c3QgYmUgZ3JlYXRlciB0aGFuIHplcm8KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6MjQKICAgIC8vIHRhc2tfaWQgPSBzZWxmLmNvdW50ZXIKICAgIGludGNfMCAvLyAwCiAgICBieXRlY18wIC8vICJjb3VudGVyIgogICAgYXBwX2dsb2JhbF9nZXRfZXgKICAgIGFzc2VydCAvLyBjaGVjayBzZWxmLmNvdW50ZXIgZXhpc3RzCiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjI2CiAgICAvLyBzZWxmLnRhc2tzW3Rhc2tfaWRdID0gdGFzawogICAgZHVwCiAgICBpdG9iCiAgICBieXRlY18yIC8vICJ0YXNrcyIKICAgIGRpZyAxCiAgICBjb25jYXQKICAgIGR1cAogICAgYm94X2RlbAogICAgcG9wCiAgICBmcmFtZV9kaWcgLTIKICAgIGJveF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6MjcKICAgIC8vIHNlbGYuaG91cnNbdGFza19pZF0gPSBob3VycwogICAgcHVzaGJ5dGVzICJob3VycyIKICAgIGRpZyAxCiAgICBjb25jYXQKICAgIGZyYW1lX2RpZyAtMQogICAgaXRvYgogICAgYm94X3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2NvbnRyaWJjaGFpbi9jb250cmFjdC5weToyOAogICAgLy8gc2VsZi5tZW1iZXJzW3Rhc2tfaWRdID0gVHhuLnNlbmRlcgogICAgcHVzaGJ5dGVzICJtZW1iZXJzIgogICAgZGlnIDEKICAgIGNvbmNhdAogICAgdHhuIFNlbmRlcgogICAgYm94X3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2NvbnRyaWJjaGFpbi9jb250cmFjdC5weToyOQogICAgLy8gc2VsZi50aW1lc3RhbXBzW3Rhc2tfaWRdID0gR2xvYmFsLmxhdGVzdF90aW1lc3RhbXAKICAgIHB1c2hieXRlcyAidGltZXN0YW1wcyIKICAgIHN3YXAKICAgIGNvbmNhdAogICAgZ2xvYmFsIExhdGVzdFRpbWVzdGFtcAogICAgaXRvYgogICAgYm94X3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2NvbnRyaWJjaGFpbi9jb250cmFjdC5weTozMQogICAgLy8gc2VsZi5jb3VudGVyICs9IFVJbnQ2NCgxKQogICAgaW50Y18wIC8vIDAKICAgIGJ5dGVjXzAgLy8gImNvdW50ZXIiCiAgICBhcHBfZ2xvYmFsX2dldF9leAogICAgYXNzZXJ0IC8vIGNoZWNrIHNlbGYuY291bnRlciBleGlzdHMKICAgIGludGNfMSAvLyAxCiAgICArCiAgICBieXRlY18wIC8vICJjb3VudGVyIgogICAgc3dhcAogICAgYXBwX2dsb2JhbF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6MzMKICAgIC8vIHJldHVybiB0YXNrX2lkCiAgICByZXRzdWIKCgovLyBzbWFydF9jb250cmFjdHMuY29udHJpYmNoYWluLmNvbnRyYWN0LkNvbnRyaWJDaGFpbi5nZXRfY29udHJpYnV0aW9uKHRhc2tfaWQ6IHVpbnQ2NCkgLT4gYnl0ZXM6CmdldF9jb250cmlidXRpb246CiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjM1LTM2CiAgICAvLyBAYWJpbWV0aG9kKCkKICAgIC8vIGRlZiBnZXRfY29udHJpYnV0aW9uKHNlbGYsIHRhc2tfaWQ6IFVJbnQ2NCkgLT4gU3RyaW5nOgogICAgcHJvdG8gMSAxCiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjM5CiAgICAvLyB0YXNrLCBleGlzdHMgPSBzZWxmLnRhc2tzLm1heWJlKHRhc2tfaWQpCiAgICBmcmFtZV9kaWcgLTEKICAgIGl0b2IKICAgIGJ5dGVjXzIgLy8gInRhc2tzIgogICAgc3dhcAogICAgY29uY2F0CiAgICBib3hfZ2V0CiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjQwCiAgICAvLyBhc3NlcnQgZXhpc3RzLCAiQ29udHJpYnV0aW9uIG5vdCBmb3VuZCIKICAgIGFzc2VydCAvLyBDb250cmlidXRpb24gbm90IGZvdW5kCiAgICAvLyBzbWFydF9jb250cmFjdHMvY29udHJpYmNoYWluL2NvbnRyYWN0LnB5OjQyCiAgICAvLyByZXR1cm4gdGFzawogICAgcmV0c3ViCgoKLy8gc21hcnRfY29udHJhY3RzLmNvbnRyaWJjaGFpbi5jb250cmFjdC5Db250cmliQ2hhaW4udG90YWxfZW50cmllcygpIC0+IHVpbnQ2NDoKdG90YWxfZW50cmllczoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9jb250cmliY2hhaW4vY29udHJhY3QucHk6NDYKICAgIC8vIHJldHVybiBzZWxmLmNvdW50ZXIKICAgIGludGNfMCAvLyAwCiAgICBieXRlY18wIC8vICJjb3VudGVyIgogICAgYXBwX2dsb2JhbF9nZXRfZXgKICAgIGFzc2VydCAvLyBjaGVjayBzZWxmLmNvdW50ZXIgZXhpc3RzCiAgICByZXRzdWIK", "clear": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBhbGdvcHkuYXJjNC5BUkM0Q29udHJhY3QuY2xlYXJfc3RhdGVfcHJvZ3JhbSgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIHB1c2hpbnQgMSAvLyAxCiAgICByZXR1cm4K"}, "sourceInfo": {"approval": {"pcOffsetMethod": "none", "sourceInfo": [{"pc": [241], "errorMessage": "Contribution not found"}, {"pc": [157], "errorMessage": "Hours must be greater than zero"}, {"pc": [72, 89, 117], "errorMessage": "OnCompletion is not NoOp"}, {"pc": [149], "errorMessage": "can only call when creating"}, {"pc": [75, 92, 120], "errorMessage": "can only call when not creating"}, {"pc": [161, 224, 246], "errorMessage": "check self.counter exists"}]}, "clear": {"pcOffsetMethod": "none", "sourceInfo": []}}, "templateVariables": {}}"""
 APP_SPEC = algokit_utils.Arc56Contract.from_json(_APP_SPEC_JSON)
 
 def _parse_abi_args(args: object | None = None) -> list[object] | None:
@@ -65,53 +65,64 @@ def _init_dataclass(cls: type, data: dict) -> object:
     return cls(**field_values)
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class DepositArgs:
-    """Dataclass for deposit arguments"""
-    memo: str
-    pay_txn: algokit_utils.AppMethodCallTransactionArgument
+class LogContributionArgs:
+    """Dataclass for log_contribution arguments"""
+    task: str
+    hours: int
 
     @property
     def abi_method_signature(self) -> str:
-        return "deposit(string,pay)uint64"
+        return "log_contribution(string,uint64)uint64"
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class WithdrawArgs:
-    """Dataclass for withdraw arguments"""
-    amount: int
+class GetContributionArgs:
+    """Dataclass for get_contribution arguments"""
+    task_id: int
 
     @property
     def abi_method_signature(self) -> str:
-        return "withdraw(uint64)uint64"
+        return "get_contribution(uint64)string"
 
 
-class BankParams:
+class ContribChainParams:
     def __init__(self, app_client: algokit_utils.AppClient):
         self.app_client = app_client
 
-    def deposit(
+    def log_contribution(
         self,
-        args: tuple[str, algokit_utils.AppMethodCallTransactionArgument] | DepositArgs,
+        args: tuple[str, int] | LogContributionArgs,
         params: algokit_utils.CommonAppCallParams | None = None
     ) -> algokit_utils.AppCallMethodCallParams:
         method_args = _parse_abi_args(args)
         params = params or algokit_utils.CommonAppCallParams()
         return self.app_client.params.call(algokit_utils.AppClientMethodCallParams(**{
             **dataclasses.asdict(params),
-            "method": "deposit(string,pay)uint64",
+            "method": "log_contribution(string,uint64)uint64",
             "args": method_args,
         }))
 
-    def withdraw(
+    def get_contribution(
         self,
-        args: tuple[int] | WithdrawArgs,
+        args: tuple[int] | GetContributionArgs,
         params: algokit_utils.CommonAppCallParams | None = None
     ) -> algokit_utils.AppCallMethodCallParams:
         method_args = _parse_abi_args(args)
         params = params or algokit_utils.CommonAppCallParams()
         return self.app_client.params.call(algokit_utils.AppClientMethodCallParams(**{
             **dataclasses.asdict(params),
-            "method": "withdraw(uint64)uint64",
+            "method": "get_contribution(uint64)string",
             "args": method_args,
+        }))
+
+    def total_entries(
+        self,
+        params: algokit_utils.CommonAppCallParams | None = None
+    ) -> algokit_utils.AppCallMethodCallParams:
+    
+        params = params or algokit_utils.CommonAppCallParams()
+        return self.app_client.params.call(algokit_utils.AppClientMethodCallParams(**{
+            **dataclasses.asdict(params),
+            "method": "total_entries()uint64",
         }))
 
     def clear_state(
@@ -125,34 +136,45 @@ class BankParams:
         )
 
 
-class BankCreateTransactionParams:
+class ContribChainCreateTransactionParams:
     def __init__(self, app_client: algokit_utils.AppClient):
         self.app_client = app_client
 
-    def deposit(
+    def log_contribution(
         self,
-        args: tuple[str, algokit_utils.AppMethodCallTransactionArgument] | DepositArgs,
+        args: tuple[str, int] | LogContributionArgs,
         params: algokit_utils.CommonAppCallParams | None = None
     ) -> algokit_utils.BuiltTransactions:
         method_args = _parse_abi_args(args)
         params = params or algokit_utils.CommonAppCallParams()
         return self.app_client.create_transaction.call(algokit_utils.AppClientMethodCallParams(**{
             **dataclasses.asdict(params),
-            "method": "deposit(string,pay)uint64",
+            "method": "log_contribution(string,uint64)uint64",
             "args": method_args,
         }))
 
-    def withdraw(
+    def get_contribution(
         self,
-        args: tuple[int] | WithdrawArgs,
+        args: tuple[int] | GetContributionArgs,
         params: algokit_utils.CommonAppCallParams | None = None
     ) -> algokit_utils.BuiltTransactions:
         method_args = _parse_abi_args(args)
         params = params or algokit_utils.CommonAppCallParams()
         return self.app_client.create_transaction.call(algokit_utils.AppClientMethodCallParams(**{
             **dataclasses.asdict(params),
-            "method": "withdraw(uint64)uint64",
+            "method": "get_contribution(uint64)string",
             "args": method_args,
+        }))
+
+    def total_entries(
+        self,
+        params: algokit_utils.CommonAppCallParams | None = None
+    ) -> algokit_utils.BuiltTransactions:
+    
+        params = params or algokit_utils.CommonAppCallParams()
+        return self.app_client.create_transaction.call(algokit_utils.AppClientMethodCallParams(**{
+            **dataclasses.asdict(params),
+            "method": "total_entries()uint64",
         }))
 
     def clear_state(
@@ -166,13 +188,13 @@ class BankCreateTransactionParams:
         )
 
 
-class BankSend:
+class ContribChainSend:
     def __init__(self, app_client: algokit_utils.AppClient):
         self.app_client = app_client
 
-    def deposit(
+    def log_contribution(
         self,
-        args: tuple[str, algokit_utils.AppMethodCallTransactionArgument] | DepositArgs,
+        args: tuple[str, int] | LogContributionArgs,
         params: algokit_utils.CommonAppCallParams | None = None,
         send_params: algokit_utils.SendParams | None = None
     ) -> algokit_utils.SendAppTransactionResult[int]:
@@ -180,24 +202,38 @@ class BankSend:
         params = params or algokit_utils.CommonAppCallParams()
         response = self.app_client.send.call(algokit_utils.AppClientMethodCallParams(**{
             **dataclasses.asdict(params),
-            "method": "deposit(string,pay)uint64",
+            "method": "log_contribution(string,uint64)uint64",
             "args": method_args,
         }), send_params=send_params)
         parsed_response = response
         return typing.cast(algokit_utils.SendAppTransactionResult[int], parsed_response)
 
-    def withdraw(
+    def get_contribution(
         self,
-        args: tuple[int] | WithdrawArgs,
+        args: tuple[int] | GetContributionArgs,
         params: algokit_utils.CommonAppCallParams | None = None,
         send_params: algokit_utils.SendParams | None = None
-    ) -> algokit_utils.SendAppTransactionResult[int]:
+    ) -> algokit_utils.SendAppTransactionResult[str]:
         method_args = _parse_abi_args(args)
         params = params or algokit_utils.CommonAppCallParams()
         response = self.app_client.send.call(algokit_utils.AppClientMethodCallParams(**{
             **dataclasses.asdict(params),
-            "method": "withdraw(uint64)uint64",
+            "method": "get_contribution(uint64)string",
             "args": method_args,
+        }), send_params=send_params)
+        parsed_response = response
+        return typing.cast(algokit_utils.SendAppTransactionResult[str], parsed_response)
+
+    def total_entries(
+        self,
+        params: algokit_utils.CommonAppCallParams | None = None,
+        send_params: algokit_utils.SendParams | None = None
+    ) -> algokit_utils.SendAppTransactionResult[int]:
+    
+        params = params or algokit_utils.CommonAppCallParams()
+        response = self.app_client.send.call(algokit_utils.AppClientMethodCallParams(**{
+            **dataclasses.asdict(params),
+            "method": "total_entries()uint64",
         }), send_params=send_params)
         parsed_response = response
         return typing.cast(algokit_utils.SendAppTransactionResult[int], parsed_response)
@@ -215,10 +251,10 @@ class BankSend:
 
 class GlobalStateValue(typing.TypedDict):
     """Shape of global_state state key values"""
-    total_deposit: int
+    counter: int
 
-class BankState:
-    """Methods to access state for the current Bank app"""
+class ContribChainState:
+    """Methods to access state for the current ContribChain app"""
 
     def __init__(self, app_client: algokit_utils.AppClient):
         self.app_client = app_client
@@ -261,9 +297,9 @@ class _GlobalState:
         return typing.cast(GlobalStateValue, converted)
 
     @property
-    def total_deposit(self) -> int:
-        """Get the current value of the total_deposit key in global_state state"""
-        value = self.app_client.state.global_state.get_value("total_deposit")
+    def counter(self) -> int:
+        """Get the current value of the counter key in global_state state"""
+        value = self.app_client.state.global_state.get_value("counter")
         if isinstance(value, dict) and "AVMUint64" in self._struct_classes:
             return _init_dataclass(self._struct_classes["AVMUint64"], value)  # type: ignore
         return typing.cast(int, value)
@@ -292,11 +328,38 @@ class _BoxState:
         return converted
 
     @property
-    def deposits(self) -> "_MapState[str, int]":
-        """Get values from the deposits map in box state"""
+    def tasks(self) -> "_MapState[int, str]":
+        """Get values from the tasks map in box state"""
         return _MapState(
             self.app_client.state.box,
-            "deposits",
+            "tasks",
+            None
+        )
+
+    @property
+    def hours(self) -> "_MapState[int, int]":
+        """Get values from the hours map in box state"""
+        return _MapState(
+            self.app_client.state.box,
+            "hours",
+            None
+        )
+
+    @property
+    def members(self) -> "_MapState[int, str]":
+        """Get values from the members map in box state"""
+        return _MapState(
+            self.app_client.state.box,
+            "members",
+            None
+        )
+
+    @property
+    def timestamps(self) -> "_MapState[int, int]":
+        """Get values from the timestamps map in box state"""
+        return _MapState(
+            self.app_client.state.box,
+            "timestamps",
             None
         )
 
@@ -335,8 +398,8 @@ class _MapState(typing.Generic[_KeyType, _ValueType]):
         return typing.cast(_ValueType | None, value)
 
 
-class BankClient:
-    """Client for interacting with Bank smart contract"""
+class ContribChainClient:
+    """Client for interacting with ContribChain smart contract"""
 
     @typing.overload
     def __init__(self, app_client: algokit_utils.AppClient) -> None: ...
@@ -384,10 +447,10 @@ class BankClient:
         else:
             raise ValueError("Either app_client or algorand and app_id must be provided")
     
-        self.params = BankParams(self.app_client)
-        self.create_transaction = BankCreateTransactionParams(self.app_client)
-        self.send = BankSend(self.app_client)
-        self.state = BankState(self.app_client)
+        self.params = ContribChainParams(self.app_client)
+        self.create_transaction = ContribChainCreateTransactionParams(self.app_client)
+        self.send = ContribChainSend(self.app_client)
+        self.state = ContribChainState(self.app_client)
 
     @staticmethod
     def from_creator_and_name(
@@ -400,8 +463,8 @@ class BankClient:
         clear_source_map: SourceMap | None = None,
         ignore_cache: bool | None = None,
         app_lookup_cache: algokit_utils.ApplicationLookup | None = None,
-    ) -> "BankClient":
-        return BankClient(
+    ) -> "ContribChainClient":
+        return ContribChainClient(
             algokit_utils.AppClient.from_creator_and_name(
                 creator_address=creator_address,
                 app_name=app_name,
@@ -424,8 +487,8 @@ class BankClient:
         default_signer: TransactionSigner | None = None,
         approval_source_map: SourceMap | None = None,
         clear_source_map: SourceMap | None = None,
-    ) -> "BankClient":
-        return BankClient(
+    ) -> "ContribChainClient":
+        return ContribChainClient(
             algokit_utils.AppClient.from_network(
                 app_spec=APP_SPEC,
                 algorand=algorand,
@@ -464,8 +527,8 @@ class BankClient:
         default_signer: TransactionSigner | None = None,
         approval_source_map: SourceMap | None = None,
         clear_source_map: SourceMap | None = None,
-    ) -> "BankClient":
-        return BankClient(
+    ) -> "ContribChainClient":
+        return ContribChainClient(
             self.app_client.clone(
                 app_name=app_name,
                 default_sender=default_sender,
@@ -475,19 +538,25 @@ class BankClient:
             )
         )
 
-    def new_group(self) -> "BankComposer":
-        return BankComposer(self)
+    def new_group(self) -> "ContribChainComposer":
+        return ContribChainComposer(self)
 
     @typing.overload
     def decode_return_value(
         self,
-        method: typing.Literal["deposit(string,pay)uint64"],
+        method: typing.Literal["log_contribution(string,uint64)uint64"],
         return_value: algokit_utils.ABIReturn | None
     ) -> int | None: ...
     @typing.overload
     def decode_return_value(
         self,
-        method: typing.Literal["withdraw(uint64)uint64"],
+        method: typing.Literal["get_contribution(uint64)string"],
+        return_value: algokit_utils.ABIReturn | None
+    ) -> str | None: ...
+    @typing.overload
+    def decode_return_value(
+        self,
+        method: typing.Literal["total_entries()uint64"],
         return_value: algokit_utils.ABIReturn | None
     ) -> int | None: ...
     @typing.overload
@@ -501,7 +570,7 @@ class BankClient:
         self,
         method: str,
         return_value: algokit_utils.ABIReturn | None
-    ) -> algokit_utils.ABIValue | algokit_utils.ABIStruct | None | int:
+    ) -> algokit_utils.ABIValue | algokit_utils.ABIStruct | None | int | str:
         """Decode ABI return value for the given method."""
         if return_value is None:
             return None
@@ -521,15 +590,15 @@ class BankClient:
 
 
 @dataclasses.dataclass(frozen=True)
-class BankBareCallCreateParams(algokit_utils.AppClientBareCallCreateParams):
-    """Parameters for creating Bank contract with bare calls"""
+class ContribChainBareCallCreateParams(algokit_utils.AppClientBareCallCreateParams):
+    """Parameters for creating ContribChain contract with bare calls"""
     on_complete: typing.Literal[OnComplete.NoOpOC] | None = None
 
     def to_algokit_utils_params(self) -> algokit_utils.AppClientBareCallCreateParams:
         return algokit_utils.AppClientBareCallCreateParams(**self.__dict__)
 
-class BankFactory(algokit_utils.TypedAppFactoryProtocol[BankBareCallCreateParams, None, None]):
-    """Factory for deploying and managing BankClient smart contracts"""
+class ContribChainFactory(algokit_utils.TypedAppFactoryProtocol[ContribChainBareCallCreateParams, None, None]):
+    """Factory for deploying and managing ContribChainClient smart contracts"""
 
     def __init__(
         self,
@@ -552,9 +621,9 @@ class BankFactory(algokit_utils.TypedAppFactoryProtocol[BankBareCallCreateParams
                 compilation_params=compilation_params,
             )
         )
-        self.params = BankFactoryParams(self.app_factory)
-        self.create_transaction = BankFactoryCreateTransaction(self.app_factory)
-        self.send = BankFactorySend(self.app_factory)
+        self.params = ContribChainFactoryParams(self.app_factory)
+        self.create_transaction = ContribChainFactoryCreateTransaction(self.app_factory)
+        self.send = ContribChainFactorySend(self.app_factory)
 
     @property
     def app_name(self) -> str:
@@ -573,7 +642,7 @@ class BankFactory(algokit_utils.TypedAppFactoryProtocol[BankBareCallCreateParams
         *,
         on_update: algokit_utils.OnUpdate | None = None,
         on_schema_break: algokit_utils.OnSchemaBreak | None = None,
-        create_params: BankBareCallCreateParams | None = None,
+        create_params: ContribChainBareCallCreateParams | None = None,
         update_params: None = None,
         delete_params: None = None,
         existing_deployments: algokit_utils.ApplicationLookup | None = None,
@@ -581,7 +650,7 @@ class BankFactory(algokit_utils.TypedAppFactoryProtocol[BankBareCallCreateParams
         app_name: str | None = None,
         compilation_params: algokit_utils.AppClientCompilationParams | None = None,
         send_params: algokit_utils.SendParams | None = None,
-    ) -> tuple[BankClient, algokit_utils.AppFactoryDeployResult]:
+    ) -> tuple[ContribChainClient, algokit_utils.AppFactoryDeployResult]:
         """Deploy the application"""
         deploy_response = self.app_factory.deploy(
             on_update=on_update,
@@ -596,7 +665,7 @@ class BankFactory(algokit_utils.TypedAppFactoryProtocol[BankBareCallCreateParams
             send_params=send_params,
         )
 
-        return BankClient(deploy_response[0]), deploy_response[1]
+        return ContribChainClient(deploy_response[0]), deploy_response[1]
 
     def get_app_client_by_creator_and_name(
         self,
@@ -608,9 +677,9 @@ class BankFactory(algokit_utils.TypedAppFactoryProtocol[BankBareCallCreateParams
         app_lookup_cache: algokit_utils.ApplicationLookup | None = None,
         approval_source_map: SourceMap | None = None,
         clear_source_map: SourceMap | None = None,
-    ) -> BankClient:
+    ) -> ContribChainClient:
         """Get an app client by creator address and name"""
-        return BankClient(
+        return ContribChainClient(
             self.app_factory.get_app_client_by_creator_and_name(
                 creator_address,
                 app_name,
@@ -631,9 +700,9 @@ class BankFactory(algokit_utils.TypedAppFactoryProtocol[BankBareCallCreateParams
         default_signer: TransactionSigner | None = None,
         approval_source_map: SourceMap | None = None,
         clear_source_map: SourceMap | None = None,
-    ) -> BankClient:
+    ) -> ContribChainClient:
         """Get an app client by app ID"""
-        return BankClient(
+        return ContribChainClient(
             self.app_factory.get_app_client_by_id(
                 app_id,
                 app_name,
@@ -645,17 +714,17 @@ class BankFactory(algokit_utils.TypedAppFactoryProtocol[BankBareCallCreateParams
         )
 
 
-class BankFactoryParams:
-    """Parameters for creating transactions for Bank contract"""
+class ContribChainFactoryParams:
+    """Parameters for creating transactions for ContribChain contract"""
 
     def __init__(self, app_factory: algokit_utils.AppFactory):
         self.app_factory = app_factory
-        self.create = BankFactoryCreateParams(app_factory)
-        self.update = BankFactoryUpdateParams(app_factory)
-        self.delete = BankFactoryDeleteParams(app_factory)
+        self.create = ContribChainFactoryCreateParams(app_factory)
+        self.update = ContribChainFactoryUpdateParams(app_factory)
+        self.delete = ContribChainFactoryDeleteParams(app_factory)
 
-class BankFactoryCreateParams:
-    """Parameters for 'create' operations of Bank contract"""
+class ContribChainFactoryCreateParams:
+    """Parameters for 'create' operations of ContribChain contract"""
 
     def __init__(self, app_factory: algokit_utils.AppFactory):
         self.app_factory = app_factory
@@ -672,48 +741,67 @@ class BankFactoryCreateParams:
             algokit_utils.AppFactoryCreateParams(**dataclasses.asdict(params)),
             compilation_params=compilation_params)
 
-    def deposit(
+    def log_contribution(
         self,
-        args: tuple[str, algokit_utils.AppMethodCallTransactionArgument] | DepositArgs,
+        args: tuple[str, int] | LogContributionArgs,
         *,
         params: algokit_utils.CommonAppCallCreateParams | None = None,
         compilation_params: algokit_utils.AppClientCompilationParams | None = None
     ) -> algokit_utils.AppCreateMethodCallParams:
-        """Creates a new instance using the deposit(string,pay)uint64 ABI method"""
+        """Creates a new instance using the log_contribution(string,uint64)uint64 ABI method"""
         params = params or algokit_utils.CommonAppCallCreateParams()
         return self.app_factory.params.create(
             algokit_utils.AppFactoryCreateMethodCallParams(
                 **{
                 **dataclasses.asdict(params),
-                "method": "deposit(string,pay)uint64",
+                "method": "log_contribution(string,uint64)uint64",
                 "args": _parse_abi_args(args),
                 }
             ),
             compilation_params=compilation_params
         )
 
-    def withdraw(
+    def get_contribution(
         self,
-        args: tuple[int] | WithdrawArgs,
+        args: tuple[int] | GetContributionArgs,
         *,
         params: algokit_utils.CommonAppCallCreateParams | None = None,
         compilation_params: algokit_utils.AppClientCompilationParams | None = None
     ) -> algokit_utils.AppCreateMethodCallParams:
-        """Creates a new instance using the withdraw(uint64)uint64 ABI method"""
+        """Creates a new instance using the get_contribution(uint64)string ABI method"""
         params = params or algokit_utils.CommonAppCallCreateParams()
         return self.app_factory.params.create(
             algokit_utils.AppFactoryCreateMethodCallParams(
                 **{
                 **dataclasses.asdict(params),
-                "method": "withdraw(uint64)uint64",
+                "method": "get_contribution(uint64)string",
                 "args": _parse_abi_args(args),
                 }
             ),
             compilation_params=compilation_params
         )
 
-class BankFactoryUpdateParams:
-    """Parameters for 'update' operations of Bank contract"""
+    def total_entries(
+        self,
+        *,
+        params: algokit_utils.CommonAppCallCreateParams | None = None,
+        compilation_params: algokit_utils.AppClientCompilationParams | None = None
+    ) -> algokit_utils.AppCreateMethodCallParams:
+        """Creates a new instance using the total_entries()uint64 ABI method"""
+        params = params or algokit_utils.CommonAppCallCreateParams()
+        return self.app_factory.params.create(
+            algokit_utils.AppFactoryCreateMethodCallParams(
+                **{
+                **dataclasses.asdict(params),
+                "method": "total_entries()uint64",
+                "args": None,
+                }
+            ),
+            compilation_params=compilation_params
+        )
+
+class ContribChainFactoryUpdateParams:
+    """Parameters for 'update' operations of ContribChain contract"""
 
     def __init__(self, app_factory: algokit_utils.AppFactory):
         self.app_factory = app_factory
@@ -730,8 +818,8 @@ class BankFactoryUpdateParams:
             algokit_utils.AppClientBareCallParams(**dataclasses.asdict(params)),
             )
 
-class BankFactoryDeleteParams:
-    """Parameters for 'delete' operations of Bank contract"""
+class ContribChainFactoryDeleteParams:
+    """Parameters for 'delete' operations of ContribChain contract"""
 
     def __init__(self, app_factory: algokit_utils.AppFactory):
         self.app_factory = app_factory
@@ -749,16 +837,16 @@ class BankFactoryDeleteParams:
             )
 
 
-class BankFactoryCreateTransaction:
-    """Create transactions for Bank contract"""
+class ContribChainFactoryCreateTransaction:
+    """Create transactions for ContribChain contract"""
 
     def __init__(self, app_factory: algokit_utils.AppFactory):
         self.app_factory = app_factory
-        self.create = BankFactoryCreateTransactionCreate(app_factory)
+        self.create = ContribChainFactoryCreateTransactionCreate(app_factory)
 
 
-class BankFactoryCreateTransactionCreate:
-    """Create new instances of Bank contract"""
+class ContribChainFactoryCreateTransactionCreate:
+    """Create new instances of ContribChain contract"""
 
     def __init__(self, app_factory: algokit_utils.AppFactory):
         self.app_factory = app_factory
@@ -774,16 +862,16 @@ class BankFactoryCreateTransactionCreate:
         )
 
 
-class BankFactorySend:
-    """Send calls to Bank contract"""
+class ContribChainFactorySend:
+    """Send calls to ContribChain contract"""
 
     def __init__(self, app_factory: algokit_utils.AppFactory):
         self.app_factory = app_factory
-        self.create = BankFactorySendCreate(app_factory)
+        self.create = ContribChainFactorySendCreate(app_factory)
 
 
-class BankFactorySendCreate:
-    """Send create calls to Bank contract"""
+class ContribChainFactorySendCreate:
+    """Send create calls to ContribChain contract"""
 
     def __init__(self, app_factory: algokit_utils.AppFactory):
         self.app_factory = app_factory
@@ -794,7 +882,7 @@ class BankFactorySendCreate:
         params: algokit_utils.CommonAppCallCreateParams | None = None,
         send_params: algokit_utils.SendParams | None = None,
         compilation_params: algokit_utils.AppClientCompilationParams | None = None,
-    ) -> tuple[BankClient, algokit_utils.SendAppCreateTransactionResult]:
+    ) -> tuple[ContribChainClient, algokit_utils.SendAppCreateTransactionResult]:
         """Creates a new instance using a bare call"""
         params = params or algokit_utils.CommonAppCallCreateParams()
         result = self.app_factory.send.bare.create(
@@ -802,49 +890,66 @@ class BankFactorySendCreate:
             send_params=send_params,
             compilation_params=compilation_params
         )
-        return BankClient(result[0]), result[1]
+        return ContribChainClient(result[0]), result[1]
 
 
-class BankComposer:
-    """Composer for creating transaction groups for Bank contract calls"""
+class ContribChainComposer:
+    """Composer for creating transaction groups for ContribChain contract calls"""
 
-    def __init__(self, client: "BankClient"):
+    def __init__(self, client: "ContribChainClient"):
         self.client = client
         self._composer = client.algorand.new_group()
         self._result_mappers: list[typing.Callable[[algokit_utils.ABIReturn | None], object] | None] = []
 
-    def deposit(
+    def log_contribution(
         self,
-        args: tuple[str, algokit_utils.AppMethodCallTransactionArgument] | DepositArgs,
+        args: tuple[str, int] | LogContributionArgs,
         params: algokit_utils.CommonAppCallParams | None = None
-    ) -> "BankComposer":
+    ) -> "ContribChainComposer":
         self._composer.add_app_call_method_call(
-            self.client.params.deposit(
+            self.client.params.log_contribution(
                 args=args,
                 params=params,
             )
         )
         self._result_mappers.append(
             lambda v: self.client.decode_return_value(
-                "deposit(string,pay)uint64", v
+                "log_contribution(string,uint64)uint64", v
             )
         )
         return self
 
-    def withdraw(
+    def get_contribution(
         self,
-        args: tuple[int] | WithdrawArgs,
+        args: tuple[int] | GetContributionArgs,
         params: algokit_utils.CommonAppCallParams | None = None
-    ) -> "BankComposer":
+    ) -> "ContribChainComposer":
         self._composer.add_app_call_method_call(
-            self.client.params.withdraw(
+            self.client.params.get_contribution(
                 args=args,
                 params=params,
             )
         )
         self._result_mappers.append(
             lambda v: self.client.decode_return_value(
-                "withdraw(uint64)uint64", v
+                "get_contribution(uint64)string", v
+            )
+        )
+        return self
+
+    def total_entries(
+        self,
+        params: algokit_utils.CommonAppCallParams | None = None
+    ) -> "ContribChainComposer":
+        self._composer.add_app_call_method_call(
+            self.client.params.total_entries(
+                
+                params=params,
+            )
+        )
+        self._result_mappers.append(
+            lambda v: self.client.decode_return_value(
+                "total_entries()uint64", v
             )
         )
         return self
@@ -854,7 +959,7 @@ class BankComposer:
         *,
         args: list[bytes] | None = None,
         params: algokit_utils.CommonAppCallParams | None = None,
-    ) -> "BankComposer":
+    ) -> "ContribChainComposer":
         params=params or algokit_utils.CommonAppCallParams()
         self._composer.add_app_call(
             self.client.params.clear_state(
@@ -870,7 +975,7 @@ class BankComposer:
     
     def add_transaction(
         self, txn: Transaction, signer: TransactionSigner | None = None
-    ) -> "BankComposer":
+    ) -> "ContribChainComposer":
         self._composer.add_transaction(txn, signer)
         return self
     
