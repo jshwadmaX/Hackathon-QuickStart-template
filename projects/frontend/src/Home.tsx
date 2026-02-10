@@ -1,13 +1,16 @@
 // src/components/Home.tsx
 import { useWallet } from '@txnlab/use-wallet-react'
 import React, { useState } from 'react'
+
 import ConnectWallet from './components/ConnectWallet'
 import AppCalls from './components/AppCalls'
 import SendAlgo from './components/SendAlgo'
 import MintNFT from './components/MintNFT'
 import CreateASA from './components/CreateASA'
 import AssetOptIn from './components/AssetOptIn'
-import Bank from './components/Bank'
+
+// ✅ REPLACED BANK WITH CONTRIBCHAIN
+import ContribChain from './components/ContribChain'
 
 interface HomeProps {}
 
@@ -18,7 +21,10 @@ const Home: React.FC<HomeProps> = () => {
   const [mintNftModal, setMintNftModal] = useState<boolean>(false)
   const [createAsaModal, setCreateAsaModal] = useState<boolean>(false)
   const [assetOptInModal, setAssetOptInModal] = useState<boolean>(false)
-  const [bankModal, setBankModal] = useState<boolean>(false)
+
+  // ✅ RENAMED BANK MODAL → CONTRIBCHAIN MODAL
+  const [contribChainModal, setContribChainModal] = useState<boolean>(false)
+
   const { activeAddress } = useWallet()
 
   const toggleWalletModal = () => {
@@ -31,6 +37,7 @@ const Home: React.FC<HomeProps> = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-teal-400 via-cyan-300 to-sky-400 relative">
+
       {/* Top-right wallet connect button */}
       <div className="absolute top-4 right-4 z-10">
         <button
@@ -42,19 +49,33 @@ const Home: React.FC<HomeProps> = () => {
         </button>
       </div>
 
-      {/* Centered content with background blur for readability */}
       <div className="flex items-center justify-center min-h-screen px-4">
         <div className="backdrop-blur-md bg-white/70 rounded-2xl p-8 shadow-xl max-w-5xl w-full">
-          <h1 className="text-4xl font-extrabold text-teal-700 mb-6 text-center">Algorand Workshop Template</h1>
-          <p className="text-gray-700 mb-8 text-center">Algorand operations in one-place.</p>
+
+          <h1 className="text-4xl font-extrabold text-teal-700 mb-6 text-center">
+            Algorand Workshop Template
+          </h1>
+
+          <p className="text-gray-700 mb-8 text-center">
+            Algorand operations in one-place.
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {/* ========== EXISTING CARDS ========== */}
+
             <div className="card bg-gradient-to-br from-sky-500 to-cyan-500 text-white shadow-xl">
               <div className="card-body">
                 <h2 className="card-title">Send Algo</h2>
                 <p>Send a payment transaction to any address.</p>
                 <div className="card-actions justify-end">
-                  <button className="btn btn-outline" disabled={!activeAddress} onClick={() => setSendAlgoModal(true)}>Open</button>
+                  <button
+                    className="btn btn-outline"
+                    disabled={!activeAddress}
+                    onClick={() => setSendAlgoModal(true)}
+                  >
+                    Open
+                  </button>
                 </div>
               </div>
             </div>
@@ -64,7 +85,13 @@ const Home: React.FC<HomeProps> = () => {
                 <h2 className="card-title">Mint NFT (ARC-3)</h2>
                 <p>Upload to IPFS via Pinata and mint a single NFT.</p>
                 <div className="card-actions justify-end">
-                  <button className="btn btn-outline" disabled={!activeAddress} onClick={() => setMintNftModal(true)}>Open</button>
+                  <button
+                    className="btn btn-outline"
+                    disabled={!activeAddress}
+                    onClick={() => setMintNftModal(true)}
+                  >
+                    Open
+                  </button>
                 </div>
               </div>
             </div>
@@ -74,31 +101,10 @@ const Home: React.FC<HomeProps> = () => {
                 <h2 className="card-title">Create Token (ASA)</h2>
                 <p>Mint a fungible ASA with custom supply and decimals.</p>
                 <div className="card-actions justify-end">
-                  <button className="btn btn-outline" disabled={!activeAddress} onClick={() => setCreateAsaModal(true)}>Open</button>
-                </div>
-              </div>
-            </div>
-
-            <div className="card bg-gradient-to-br from-indigo-500 to-blue-500 text-white shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Asset Opt-In</h2>
-                <p>Opt-in to any existing ASA to receive tokens.</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-outline" disabled={!activeAddress} onClick={() => setAssetOptInModal(true)}>Open</button>
-                </div>
-              </div>
-            </div>
-
-            <div className="card bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-xl md:col-span-2 lg:col-span-1">
-              <div className="card-body">
-                <h2 className="card-title">Counter (App ID 747652603)</h2>
-                <p>Interact with the shared on-chain counter app.</p>
-                <div className="card-actions justify-end">
                   <button
-                    data-test-id="appcalls-demo"
                     className="btn btn-outline"
                     disabled={!activeAddress}
-                    onClick={toggleAppCallsModal}
+                    onClick={() => setCreateAsaModal(true)}
                   >
                     Open
                   </button>
@@ -106,28 +112,70 @@ const Home: React.FC<HomeProps> = () => {
               </div>
             </div>
 
-            <div className="card bg-gradient-to-br from-rose-500 to-red-500 text-white shadow-xl md:col-span-2 lg:col-span-1">
+            {/* ========== 🟢 NEW CONTRIBCHAIN CARD ========== */}
+
+            <div className="card bg-gradient-to-br from-purple-500 to-indigo-500 text-white shadow-xl">
               <div className="card-body">
-                <h2 className="card-title">Bank</h2>
-                <p>Deposit and withdraw ALGOs and view statements.</p>
+                <h2 className="card-title">ContribChain</h2>
+                <p>Track group project contributions on-chain.</p>
+
                 <div className="card-actions justify-end">
-                  <button className="btn btn-outline" disabled={!activeAddress} onClick={() => setBankModal(true)}>Open</button>
+                  <button
+                    className="btn btn-outline"
+                    disabled={!activeAddress}
+                    onClick={() => setContribChainModal(true)}
+                  >
+                    Open
+                  </button>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
-      <ConnectWallet openModal={openWalletModal} closeModal={toggleWalletModal} />
-      <AppCalls openModal={appCallsDemoModal} setModalState={setAppCallsDemoModal} />
-      <SendAlgo openModal={sendAlgoModal} closeModal={() => setSendAlgoModal(false)} />
-      <MintNFT openModal={mintNftModal} closeModal={() => setMintNftModal(false)} />
-      <CreateASA openModal={createAsaModal} closeModal={() => setCreateAsaModal(false)} />
-      <AssetOptIn openModal={assetOptInModal} closeModal={() => setAssetOptInModal(false)} />
-      <Bank openModal={bankModal} closeModal={() => setBankModal(false)} />
+      {/* ========== MODALS ========== */}
+
+      <ConnectWallet
+        openModal={openWalletModal}
+        closeModal={toggleWalletModal}
+      />
+
+      <AppCalls
+        openModal={appCallsDemoModal}
+        setModalState={setAppCallsDemoModal}
+      />
+
+      <SendAlgo
+        openModal={sendAlgoModal}
+        closeModal={() => setSendAlgoModal(false)}
+      />
+
+      <MintNFT
+        openModal={mintNftModal}
+        closeModal={() => setMintNftModal(false)}
+      />
+
+      <CreateASA
+        openModal={createAsaModal}
+        closeModal={() => setCreateAsaModal(false)}
+      />
+
+      <AssetOptIn
+        openModal={assetOptInModal}
+        closeModal={() => setAssetOptInModal(false)}
+      />
+
+      {/* ✅ REPLACED BANK WITH CONTRIBCHAIN */}
+      <ContribChain
+        openModal={contribChainModal}
+        closeModal={() => setContribChainModal(false)}
+      />
+
     </div>
   )
 }
 
 export default Home
+
