@@ -147,9 +147,10 @@ VITE_INDEXER_SERVER=https://testnet-idx.algonode.cloud
 
 ---
 
-## 👩‍💻 Team
+## 👩‍💻 Team – NyanArchy 
 
-**Arya Shinde** – NyanArchy  
+**Arya Shinde** 
+**Rutuja Solanke** 
 
 
 ---
