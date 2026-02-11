@@ -1,28 +1,13 @@
-// src/components/Home.tsx
+// src/Home.tsx
 import { useWallet } from '@txnlab/use-wallet-react'
 import React, { useState } from 'react'
 
-import ConnectWallet from './components/ConnectWallet'
-import AppCalls from './components/AppCalls'
-import SendAlgo from './components/SendAlgo'
-import MintNFT from './components/MintNFT'
-import CreateASA from './components/CreateASA'
-import AssetOptIn from './components/AssetOptIn'
+import ContribChain from "./components/ContribChain";
+import Account from "./components/Account";
+import ConnectWallet from "./components/ConnectWallet";
 
-// ✅ REPLACED BANK WITH CONTRIBCHAIN
-import ContribChain from './components/ContribChain'
-
-interface HomeProps {}
-
-const Home: React.FC<HomeProps> = () => {
+const Home: React.FC = () => {
   const [openWalletModal, setOpenWalletModal] = useState<boolean>(false)
-  const [appCallsDemoModal, setAppCallsDemoModal] = useState<boolean>(false)
-  const [sendAlgoModal, setSendAlgoModal] = useState<boolean>(false)
-  const [mintNftModal, setMintNftModal] = useState<boolean>(false)
-  const [createAsaModal, setCreateAsaModal] = useState<boolean>(false)
-  const [assetOptInModal, setAssetOptInModal] = useState<boolean>(false)
-
-  // ✅ RENAMED BANK MODAL → CONTRIBCHAIN MODAL
   const [contribChainModal, setContribChainModal] = useState<boolean>(false)
 
   const { activeAddress } = useWallet()
@@ -31,147 +16,99 @@ const Home: React.FC<HomeProps> = () => {
     setOpenWalletModal(!openWalletModal)
   }
 
-  const toggleAppCallsModal = () => {
-    setAppCallsDemoModal(!appCallsDemoModal)
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-teal-400 via-cyan-300 to-sky-400 relative">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      
+      {/* HEADER */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-blue-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold">C</span>
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              ContribChain
+            </span>
+          </div>
 
-      {/* Top-right wallet connect button */}
-      <div className="absolute top-4 right-4 z-10">
-        <button
-          data-test-id="connect-wallet"
-          className="btn btn-accent px-5 py-2 text-sm font-medium rounded-full shadow-md"
-          onClick={toggleWalletModal}
-        >
-          {activeAddress ? 'Wallet Connected' : 'Connect Wallet'}
-        </button>
-      </div>
+          <button
+            className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all shadow-md
+              ${activeAddress 
+                ? 'bg-green-600 text-white' 
+                : 'bg-blue-600 text-white'
+              }`}
+            onClick={toggleWalletModal}
+          >
+            {activeAddress 
+              ? `${activeAddress.slice(0,6)}...${activeAddress.slice(-4)}`
+              : 'Connect Wallet'}
+          </button>
+        </div>
+      </header>
 
-      <div className="flex items-center justify-center min-h-screen px-4">
-        <div className="backdrop-blur-md bg-white/70 rounded-2xl p-8 shadow-xl max-w-5xl w-full">
+      {/* HERO */}
+      <div className="pt-32 pb-20 px-6">
+        <div className="max-w-5xl mx-auto text-center">
 
-          <h1 className="text-4xl font-extrabold text-teal-700 mb-6 text-center">
-            Algorand Workshop Template
+          <h1 className="text-5xl font-extrabold mb-6 text-gray-800">
+            Decentralized Group Contribution Platform
           </h1>
 
-          <p className="text-gray-700 mb-8 text-center">
-            Algorand operations in one-place.
+          <p className="text-xl text-gray-600 mb-10">
+            Track student contributions on Algorand with transparent, immutable records.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            {/* ========== EXISTING CARDS ========== */}
-
-            <div className="card bg-gradient-to-br from-sky-500 to-cyan-500 text-white shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Send Algo</h2>
-                <p>Send a payment transaction to any address.</p>
-                <div className="card-actions justify-end">
-                  <button
-                    className="btn btn-outline"
-                    disabled={!activeAddress}
-                    onClick={() => setSendAlgoModal(true)}
-                  >
-                    Open
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="card bg-gradient-to-br from-fuchsia-500 to-pink-500 text-white shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Mint NFT (ARC-3)</h2>
-                <p>Upload to IPFS via Pinata and mint a single NFT.</p>
-                <div className="card-actions justify-end">
-                  <button
-                    className="btn btn-outline"
-                    disabled={!activeAddress}
-                    onClick={() => setMintNftModal(true)}
-                  >
-                    Open
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="card bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Create Token (ASA)</h2>
-                <p>Mint a fungible ASA with custom supply and decimals.</p>
-                <div className="card-actions justify-end">
-                  <button
-                    className="btn btn-outline"
-                    disabled={!activeAddress}
-                    onClick={() => setCreateAsaModal(true)}
-                  >
-                    Open
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* ========== 🟢 NEW CONTRIBCHAIN CARD ========== */}
-
-            <div className="card bg-gradient-to-br from-purple-500 to-indigo-500 text-white shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">ContribChain</h2>
-                <p>Track group project contributions on-chain.</p>
-
-                <div className="card-actions justify-end">
-                  <button
-                    className="btn btn-outline"
-                    disabled={!activeAddress}
-                    onClick={() => setContribChainModal(true)}
-                  >
-                    Open
-                  </button>
-                </div>
-              </div>
-            </div>
-
-          </div>
+          <button
+            onClick={() => setContribChainModal(true)}
+            disabled={!activeAddress}
+            className="px-8 py-4 bg-blue-600 text-white font-bold rounded-xl
+                     disabled:opacity-50"
+          >
+            Launch ContribChain
+          </button>
         </div>
       </div>
 
-      {/* ========== MODALS ========== */}
+      {/* MAIN FEATURE CARD */}
+      <div className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="bg-white rounded-2xl p-8 shadow-xl">
 
-      <ConnectWallet
-        openModal={openWalletModal}
-        closeModal={toggleWalletModal}
-      />
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">
+            What ContribChain Does
+          </h2>
 
-      <AppCalls
-        openModal={appCallsDemoModal}
-        setModalState={setAppCallsDemoModal}
-      />
+          <div className="grid md:grid-cols-3 gap-6">
 
-      <SendAlgo
-        openModal={sendAlgoModal}
-        closeModal={() => setSendAlgoModal(false)}
-      />
+            <div className="p-4 border rounded-xl">
+              <h3 className="font-bold mb-2">Immutable Records</h3>
+              <p className="text-sm text-gray-600">
+                Every contribution stored on Algorand blockchain
+              </p>
+            </div>
 
-      <MintNFT
-        openModal={mintNftModal}
-        closeModal={() => setMintNftModal(false)}
-      />
+            <div className="p-4 border rounded-xl">
+              <h3 className="font-bold mb-2">Fair Grading</h3>
+              <p className="text-sm text-gray-600">
+                Professors evaluate based on real proof
+              </p>
+            </div>
 
-      <CreateASA
-        openModal={createAsaModal}
-        closeModal={() => setCreateAsaModal(false)}
-      />
+            <div className="p-4 border rounded-xl">
+              <h3 className="font-bold mb-2">Fraud Detection</h3>
+              <p className="text-sm text-gray-600">
+                Identify free riders in teams
+              </p>
+            </div>
 
-      <AssetOptIn
-        openModal={assetOptInModal}
-        closeModal={() => setAssetOptInModal(false)}
-      />
+          </div>
 
-      {/* ✅ REPLACED BANK WITH CONTRIBCHAIN */}
-      <ContribChain
-        openModal={contribChainModal}
-        closeModal={() => setContribChainModal(false)}
-      />
+        </div>
+      </div>
+
+      {/* MODALS – ONLY WHAT YOU USE */}
+      <ConnectWallet openModal={openWalletModal} closeModal={toggleWalletModal} />
+      <ContribChain openModal={contribChainModal} closeModal={() => setContribChainModal(false)} />
 
     </div>
   )
