@@ -41,7 +41,7 @@ const Home: React.FC = () => {
             onClick={toggleWalletModal}
           >
             {activeAddress
-              ? `${activeAddress.slice(0,6)}...${activeAddress.slice(-4)}`
+              ? `${activeAddress.slice(0, 6)}...${activeAddress.slice(-4)}`
               : 'Connect Wallet'}
           </button>
         </div>
@@ -62,8 +62,7 @@ const Home: React.FC = () => {
           <button
             onClick={() => setContribChainModal(true)}
             disabled={!activeAddress}
-            className="px-8 py-4 bg-blue-600 text-white font-bold rounded-xl
-                     disabled:opacity-50"
+            className="px-8 py-4 bg-blue-600 text-white font-bold rounded-xl disabled:opacity-50"
           >
             Launch ContribChain
           </button>
@@ -78,12 +77,13 @@ const Home: React.FC = () => {
             What ContribChain Does
           </h2>
 
-          {/* NEW DESCRIPTION */}
+          {/* DESCRIPTION */}
           <p className="text-blue-100 mb-6 leading-relaxed bg-gradient-to-r from-blue-600 to-indigo-600 p-4 rounded-xl">
             Track group project contributions with immutable blockchain records.
             AI-powered chatbot provides conflict resolution, stress management, and task optimization.
           </p>
 
+          {/* FEATURE CARDS */}
           <div className="grid md:grid-cols-3 gap-6">
 
             <div className="p-4 border rounded-xl">
@@ -109,16 +109,32 @@ const Home: React.FC = () => {
 
           </div>
 
-          {/* NEW FEATURE ITEM */}
-          <div className="mt-6 flex items-center gap-2 text-sm text-gray-700">
-            <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                clipRule="evenodd"
-              />
-            </svg>
-            AI team coordinator chatbot
+          {/* EXTRA FEATURES */}
+          <div className="mt-6 flex flex-col gap-3 text-sm text-gray-700">
+
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              AI team coordinator chatbot
+            </div>
+
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                <path
+                  fillRule="evenodd"
+                  d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Automated fair grading (A+ to F)
+            </div>
+
           </div>
 
         </div>

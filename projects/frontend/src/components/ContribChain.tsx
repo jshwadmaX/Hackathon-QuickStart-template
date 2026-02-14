@@ -5,8 +5,9 @@ import ContributionForm from './contrib/ContributionForm'
 import StatsCards from './contrib/StatsCards'
 import HistoryTable from './contrib/HistoryTable'
 import TeamMembers from './contrib/TeamMembers'
-// ✅ ADD THIS IMPORT
 import AIAssistant from './contrib/AIAssistant'
+// ✅ ADD THIS IMPORT
+import GradingSystem from './contrib/GradingSystem'
 
 interface ContribChainProps {
   openModal: boolean
@@ -16,10 +17,9 @@ interface ContribChainProps {
 const ContribChain: React.FC<ContribChainProps> = ({ openModal, closeModal }) => {
   const { activeAddress } = useWallet()
   const [loading, setLoading] = useState(false)
-  // ✅ ADD AI CHAT TAB STATE
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'ai-chat'>('dashboard')
+  // ✅ UPDATE TAB STATE TO INCLUDE GRADING
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'ai-chat' | 'grading'>('dashboard')
 
-  // ... (keep your existing mock data)
   const mockContributions = [
     {
       id: '1',
@@ -74,7 +74,7 @@ const ContribChain: React.FC<ContribChainProps> = ({ openModal, closeModal }) =>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={closeModal} />
 
       <div className="relative min-h-screen flex items-center justify-center p-4">
-        <div className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 rounded-2xl shadow-2xl max-w-7xl w-full p-8">
+        <div className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 rounded-2xl shadow-2xl max-w-7xl w-full p-8 max-h-[90vh] overflow-y-auto">
           
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -93,11 +93,11 @@ const ContribChain: React.FC<ContribChainProps> = ({ openModal, closeModal }) =>
             </button>
           </div>
 
-          {/* ✅ TAB NAVIGATION */}
-          <div className="flex gap-2 mb-6 border-b border-gray-200">
+          {/* ✅ UPDATED TAB NAVIGATION WITH GRADING */}
+          <div className="flex gap-2 mb-6 border-b border-gray-200 overflow-x-auto">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`px-6 py-3 font-semibold transition-all ${
+              className={`px-6 py-3 font-semibold transition-all whitespace-nowrap ${
                 activeTab === 'dashboard'
                   ? 'text-blue-600 border-b-2 border-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -107,19 +107,29 @@ const ContribChain: React.FC<ContribChainProps> = ({ openModal, closeModal }) =>
             </button>
             <button
               onClick={() => setActiveTab('ai-chat')}
-              className={`px-6 py-3 font-semibold transition-all relative ${
+              className={`px-6 py-3 font-semibold transition-all relative whitespace-nowrap ${
                 activeTab === 'ai-chat'
                   ? 'text-purple-600 border-b-2 border-purple-600'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              🤖 AI Team Coordinator
+              🤖 AI Coordinator
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+            </button>
+            <button
+              onClick={() => setActiveTab('grading')}
+              className={`px-6 py-3 font-semibold transition-all whitespace-nowrap ${
+                activeTab === 'grading'
+                  ? 'text-green-600 border-b-2 border-green-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              🎓 Fair Grading
             </button>
           </div>
 
-          {/* ✅ CONDITIONAL RENDERING BASED ON TAB */}
-          {activeTab === 'dashboard' ? (
+          {/* ✅ CONDITIONAL RENDERING WITH GRADING TAB */}
+          {activeTab === 'dashboard' && (
             <>
               <StatsCards
                 totalContributions={6}
@@ -139,13 +149,19 @@ const ContribChain: React.FC<ContribChainProps> = ({ openModal, closeModal }) =>
                 </div>
               </div>
             </>
-          ) : (
+          )}
+
+          {activeTab === 'ai-chat' && (
             <AIAssistant
               teamData={{
                 members: mockTeamMembers,
                 contributions: mockContributions,
               }}
             />
+          )}
+
+          {activeTab === 'grading' && (
+            <GradingSystem members={mockTeamMembers} totalProjectMarks={100} />
           )}
 
         </div>
